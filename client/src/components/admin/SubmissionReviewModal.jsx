@@ -104,7 +104,7 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
               className="flex-1 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium cursor-pointer hover:bg-bg-hover hover:text-text-primary transition-all font-sans">
               Cancel
             </button>
-            <button onClick={() => handleReview('Rejected')}
+            <button onClick={() => { if (confirm('Reject this submission? This action cannot be undone.')) handleReview('Rejected'); }}
               className="flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-danger/20 transition-all font-sans">
               ✕ Reject
             </button>
