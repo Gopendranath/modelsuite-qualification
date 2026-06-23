@@ -1,9 +1,7 @@
-﻿import { createContext, useContext, useState } from 'react';
-
-const AuthContext = createContext(null);
+﻿import { useState } from 'react';
+import { AuthContext } from './useAuth';
 
 export const AuthProvider = ({ children }) => {
-  // — if token is expired, user stays "logged in" until a request fails
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
@@ -25,5 +23,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
