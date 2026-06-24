@@ -29,15 +29,17 @@ const AdminDashboard = () => {
 
   const loadTasks = async () => {
     try {
-      const { data } = await fetchAllTasks();
+      const params = {};
+      if (search) params.search = search;
+      if (statusFilter !== 'All') params.status = statusFilter;
+      const { data } = await fetchAllTasks(params);
       setTasks(data);
     } catch {
       alert('Failed to load tasks');
     }
   };
 
-  // eslint-disable-next-line
-  useEffect(() => { loadTasks(); }, []);
+  useEffect(() => { loadTasks(); }, [search, statusFilter]);
 
   const stats = {
     total:     tasks.length,
@@ -52,15 +54,6 @@ const AdminDashboard = () => {
     { label: 'Submitted',   value: stats.submitted, colorClass: 'stat-card-info',    valueColor: '#60A5FA' },
     { label: 'Approved',    value: stats.approved,  colorClass: 'stat-card-green',   valueColor: '#34D399' },
   ];
-
-  /* Filter tasks */
-  const filteredTasks = tasks.filter((t) => {
-    const matchSearch = !search ||
-      t.title?.toLowerCase().includes(search.toLowerCase()) ||
-      t.assignedTo?.name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' || t.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
 
   return (
     <div className="flex min-h-screen" style={{ background: '#050505' }}>
@@ -120,7 +113,7 @@ const AdminDashboard = () => {
                   border: '1px solid rgba(255,255,255,0.09)',
                   fontFamily: 'Inter, sans-serif',
                 }}>
-                {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
+                {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
               </span>
             </div>
 
@@ -156,7 +149,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <TasksTable tasks={filteredTasks} onEdit={setEditTask} onRefresh={loadTasks} />
+          <TasksTable tasks={tasks} onEdit={setEditTask} onRefresh={loadTasks} />
         </div>
       </main>
 
