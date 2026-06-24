@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '../../components/admin/Sidebar';
 import TasksTable from '../../components/admin/TasksTable';
 import CreateTaskModal from '../../components/admin/CreateTaskModal';
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   const [search, setSearch]         = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const params = {};
       if (search) params.search = search;
@@ -37,9 +37,16 @@ const AdminDashboard = () => {
     } catch {
       alert('Failed to load tasks');
     }
-  };
+  }, [search, statusFilter]);
 
-  useEffect(() => { loadTasks(); }, [search, statusFilter]);
+  useEffect(() => {
+    const params = {};
+    if (search) params.search = search;
+    if (statusFilter !== 'All') params.status = statusFilter;
+    fetchAllTasks(params)
+      .then(({ data }) => setTasks(data))
+      .catch(() => alert('Failed to load tasks'));
+  }, [search, statusFilter]);
 
   const stats = {
     total:     tasks.length,
