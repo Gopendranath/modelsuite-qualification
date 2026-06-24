@@ -1,4 +1,6 @@
 ﻿const mongoose = require('mongoose');
+const Submission = require('./Submission');
+
 const taskSchema = new mongoose.Schema(
   {
     title: {
@@ -25,5 +27,11 @@ const taskSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+taskSchema.pre('findOneAndDelete', async function (next) {
+  const taskId = this.getQuery()._id;
+  await Submission.deleteMany({ taskId });
+  next();
+});
 
 module.exports = mongoose.model('Task', taskSchema);
